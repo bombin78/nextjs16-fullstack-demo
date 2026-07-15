@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,11 +16,16 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useActionState } from "react"
+import { loginAction, LoginState } from "@/app/login/actions"
+import { ErrorMessage } from "./error-message"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, formAction] = useActionState<LoginState | null, FormData>(loginAction, null);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -29,21 +36,30 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="m@example.com"
                   required
                 />
               </Field>
               <Field>
                 <FieldLabel htmlFor="password">Пароль</FieldLabel>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  name="password" 
+                  required 
+                />
               </Field>
+              {
+                state?.error && <ErrorMessage message={state.error} />
+              }
               <Field>
                 <Button type="submit">Войти</Button>
                 <FieldDescription className="text-center">
