@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button"
 import { TypographyH1 } from "@/components/ui/typography-h1";
-import { TypographyH3 } from "@/components/ui/typography-h3";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div>
-      <main>
+    <div className="flex min-h-screen items-center justify-center">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-16">
         <TypographyH1>Заголовок</TypographyH1>
-        <TypographyH3>Подзаголовок</TypographyH3>
-       <Button variant="default">Button</Button>
+        <br />
+        <Button>
+          <Link href="/dashboard">Собрать</Link>
+        </Button>
       </main>
     </div>
   );
