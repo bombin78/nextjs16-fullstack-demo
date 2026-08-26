@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# project walkthrough: the folder and the pointers to it
+/learn
+/CLAUDE.local.md
+/.claude/settings.local.json
+/.claude/skills/terms

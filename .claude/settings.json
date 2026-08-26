@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(//)",
+      "Write(//)",
+      "Edit(//)"
+    ],
+    "allow": [
+      "Read(.)",
+      "Read(./**)",
+      "Write(.)",
+      "Write(./**)",
+      "Edit(.)",
+      "Edit(./**)",
+      "WebSearch",
+      "WebFetch"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowRead": [
+        "."
+      ],
+      "allowWrite": [
+        "."
+      ],
+      "denyRead": [
+        "~/"
+      ],
+      "denyWrite": [
+        "~/"
+      ]
+    }
+  }
+}
