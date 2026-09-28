@@ -1,3 +1,15 @@
+// 1:49:60
+// next-auth (Auth.js v5, здесь 5.0.0-beta.31) — библиотека аутентификации для Next.js.
+// Импорт по умолчанию — функция NextAuth(config): на вход конфигурация
+// (провайдеры входа, стратегия сессии, свои страницы, коллбэки),
+// на выходе объект с готовыми инструментами:
+//   handlers        — обработчики GET/POST для app/api/auth/[...nextauth]/route.ts,
+//                     они обслуживают служебные адреса /api/auth/* (вход, выход, сессия, CSRF);
+//   auth()          — чтение текущей сессии на сервере: серверные компоненты,
+//                     серверные действия, route handlers, middleware;
+//   signIn/signOut  — вход и выход; в этом проекте signIn вызывается из app/login/actions.ts.
+// Сама библиотека выпускает и проверяет куку сессии (здесь — JWT, см. session.strategy ниже),
+// хеширование пароля в неё не входит — им занимается bcryptjs в authorize().
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from '@/lib/db';
@@ -6,7 +18,9 @@ import bcrypt from "bcryptjs";
 export const { handlers, auth, signIn, signOut } = NextAuth({
     trustHost: true,
     secret: process.env.NEXTAUTH_SECRET,
+    // здесь идет перечисление вариантов аутентификации
     providers: [
+        // у нас будет только один вариант через форму по логину и паролю
         Credentials({
             credentials: {
                 email: {
@@ -56,21 +70,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     callbacks: {
         jwt({ token, user}) {
             if (user) {
-                token.id = user.id
-                token.email = user.email
-                token.name = user.email
+                token.id = user.id;
+                token.email = user.email;
+                token.name = user.email;
             }
 
-            return token
+            return token;
         },
         session({ session, token}) {
+            // REVIEW: [Tutorial]
             if (session.user) {
-                session.user.id = token.id as string
-                session.user.email = token.email as string
-                session.user.name = token.name
+                session.user.id = token.id;
+                session.user.email = token.email;
+                session.user.name = token.name;
             }
+            // if (session.user) {
+            //     session.user.id = token.id as string
+            //     session.user.email = token.email as string
+            //     session.user.name = token.name
+            // }
 
             return session;
         }
     }
-})
+});
