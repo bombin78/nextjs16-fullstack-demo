@@ -1,17 +1,97 @@
-import { PrismaClient } from "@/lib/generated/prisma/client"
-import { PrismaPg } from "@prisma/adapter-pg"
-import { Pool } from "pg"
+// S:1:18:53 По документации это файл lib/prisma.ts
+// 
+// Сгенерированный по schema.prisma клиент — типизированный доступ к базе
+// (методы вроде prisma.user.findMany и т.п.).
+// Сама в базу Prisma Client не ходит. Пример — вызов из auth.ts:
+//   prisma.user.findUnique({ where: { email: "test@test.com" } })
+// Туда:
+// 1) клиент передаёт описание вызова компилятору запросов (WASM-модуль внутри
+//    @prisma/client) и получает от него план запроса;
+// 2) по плану собирает объект { sql, args, argTypes } и вызывает queryRaw()
+//    с этим объектом у адаптера — объекта, который вернул adapter.connect()
+//    (подробно — у const adapter ниже):
+//      sql:  'SELECT "public"."User"."id", … FROM "public"."User"
+//             WHERE ("public"."User"."email" = $1 AND 1=1) LIMIT $2 OFFSET $3'
+//      args: ["test@test.com", "1", "0"]
+//    Значения в текст не вклеены: на их местах метки $1, $2, $3.
+// Обратно клиент получает от адаптера имена колонок, коды их типов и строки
+// таблицы в виде массивов (подробно — у PrismaPg ниже). Из них он собирает
+// объект и переводит значения по коду типа:
+//   { id: "cmrjec73a…", email: "test@test.com", name: "…", password: "…",
+//     createdAt: Date 2026-07-13T15:47:54.214Z }
+// Объектом Date дата становится только здесь, в клиенте.
+import { PrismaClient } from "@/lib/generated/prisma/client";
+// PrismaPg — driver adapter для Postgres: переходник между Prisma Client и pg.
+// В Prisma 7 адаптер обязателен, своего способа сходить в базу у клиента нет.
+// Туда: адаптер (объект PrismaPgAdapter, см. у const adapter ниже) получает
+// { sql, args, argTypes }. Значения, которые pg не примет как
+// есть, переводит (Date → "2026-07-13 15:47:54.214"). Затем вызывает
+//   pool.query({ text: sql, values: args, rowMode: "array", types })
+// на пуле из const pool ниже. В types передаёт свои функции разбора для
+// части типов, в том числе для даты и времени.
+// Обратно: от pg приходят имена колонок, номера их типов в Postgres и строки
+// таблицы. Каждая строка таблицы — массив значений в порядке колонок, без имён
+// полей; значения уже переведены в JS (число, строка, true/false, null).
+// Адаптер переводит номера типов в коды типов Prisma и отдаёт клиенту:
+//   columnNames: ["id", "email", "name", "password", "createdAt"]
+//   columnTypes: [7, 7, 7, 7, 10]        // 7 — Text, 10 — DateTime
+//   rows: [["cmrjec73a…", "test@test.com", "…", "…",
+//           "2026-07-13T15:47:54.214+00:00"]]
+// Дата здесь ещё значение типа string: так её оставила функция разбора
+// от PrismaPg.
+// Ошибку от pg адаптер переводит в DriverAdapterError, понятную клиенту.
+import { PrismaPg } from "@prisma/adapter-pg";
+// node-postgres (пакет "pg") — драйвер Postgres для Node.js. Драйвер —
+// библиотека, которая говорит с базой по её протоколу. Сама открывает
+// TCP-соединение.
+// Туда: текст запроса и значения шлёт базе раздельно. Текст идёт одним
+// сообщением, значения ["test@test.com", "1", "0"] — следующим.
+// Обратно: из байтов ответа достаёт имена колонок, номера их типов
+// (text = 25, timestamp = 1114) и значения. Каждое значение переводит в JS
+// функцией разбора для его типа: своей или той, что передал PrismaPg.
+// Каждую строку таблицы отдаёт массивом значений в порядке колонок
+// (rowMode: "array"), без имён полей.
+// Pool, который отсюда импортируется, — надстройка над драйвером: держит
+// сразу несколько таких соединений (по умолчанию до 10) и раздаёт их по
+// очереди тому, кто вызвал pool.query(). Пул только выдаёт соединение
+// и забирает обратно.
+// Если все соединения заняты — запрос ждёт очереди, а не открывает новое.
+import { Pool } from "pg";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
+// globalThis переживает hot reload модуля в dev, в отличие от обычных
+// переменных — поэтому именно сюда прячем клиент между перезагрузками.
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
+// Pool — набор открытых соединений с базой, готовых к переиспользованию,
+// чтобы не открывать TCP-соединение и не делать handshake на каждый запрос.
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-})
+});
 
-const adapter = new PrismaPg(pool)
+// PrismaPg — фабрика: этот объект только запоминает pool, queryRaw у него нет.
+// Prisma Client при первом запросе вызывает adapter.connect(), и фабрика
+// создаёт сам адаптер — объект PrismaPgAdapter с этим же pool внутри.
+// Все запросы клиент дальше отправляет через этот PrismaPgAdapter.
+const adapter = new PrismaPg(pool);
+
+// Если клиент уже лежит в globalThis (пережил прошлый hot reload) — берём его,
+// иначе создаём новый.
+// pool и adapter выше создаются заново при каждой загрузке модуля. Соединений
+// они сами не открывают: пул открывает соединение только при первом запросе
+// через него. Если клиент взят из globalThis, новый pool так и остаётся
+// пустым: запросы идут через старый клиент и его старый pool.
+// Без кеша каждая загрузка модуля давала бы новый клиент со своим pool,
+// и каждый такой pool открывал бы свои соединения. Старый pool закрывает
+// соединение, только когда оно простояло без дела 10 с (idleTimeoutMillis
+// по умолчанию). В итоге, без кеша, если перезагрузки идут чаще, чем раз
+// в 10 с, соединения копятся и могут упереться в лимит подключений Postgres.
 export const prisma =
   globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
+// В production модуль выполняется один раз за жизнь процесса, hot reload нет —
+// поэтому кешировать через globalThis нужно только вне production.
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
+  globalForPrisma.prisma = prisma;
 }

@@ -1,3 +1,4 @@
+// 1:20:42
 import { auth } from "@/auth";
 import { SignupForm } from "@/components/signup-form"
 import { redirect } from "next/navigation";

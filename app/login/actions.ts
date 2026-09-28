@@ -1,8 +1,8 @@
 'use server'
 
-import { redirect } from "next/navigation"
-import { signIn } from "@/auth"
-import { AuthError } from "next-auth"
+import { redirect } from "next/navigation";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
 
 export type LoginState = { error?: string }
 
@@ -19,14 +19,15 @@ export async function loginAction(
 
     try {
 
-        console.log('email, ', email, password)
+        console.log('email, ', email, password);
+        // S:2:09:00
         await signIn('credentials', {
             email,
             password,
             redirectTo: "/dashboard"
         })
-
-        redirect('/dashboard')
+        redirect('/dashboard');
+        // E:2:09:55
     } catch (error) {
         if (error instanceof AuthError) {
             if (error.type === 'CredentialsSignin') {

@@ -1,26 +1,57 @@
+// 1:20:42
 "use client"
 
-import { signupAction, SignupState } from "@/app/signup/actions"
-import { Button } from "@/components/ui/button"
+import { signupAction, SignupState } from "@/app/signup/actions";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { useActionState } from "react"
-import { ErrorMessage } from "./error-message"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useActionState } from "react";
+import { ErrorMessage } from "./error-message";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-const [state, formAction] = useActionState<SignupState | null, FormData>(signupAction, null);
+  // useActionState связывает серверное действие signupAction с состоянием компонента.
+  //
+  // Дженерики: <тип состояния, тип данных, которые приходят при отправке формы>.
+  //   SignupState | null — то, что хранится в state (null — пока форму не отправляли);
+  //   FormData           — то, что браузер соберёт из полей <form> при submit.
+  //
+  // Аргументы:
+  //   signupAction — функция, которую React вызовет при отправке формы.
+  //                  Она получает (предыдущее состояние, FormData) и возвращает новое состояние.
+  //   null         — начальное значение state до первой отправки.
+  //
+  // Возвращает кортеж:
+  //   state      — последний результат signupAction (например, { error: "Email уже занят" });
+  //   formAction — обёртка над signupAction, её передаём в <form action={...}>.
+  //                При submit React вызывает signupAction на сервере, дожидается ответа,
+  //                кладёт результат в state и перерисовывает компонент.
+  //
+  // Почему state бывает только null или { error }:
+  //   - до первой отправки state = null (начальное значение);
+  //   - при ошибке проверки signupAction делает return { error: "..." }, это попадает в state;
+  //   - при успехе signupAction ничего не возвращает: она вызывает redirect("/login").
+  //     redirect() не возвращает управление, а бросает исключение NEXT_REDIRECT.
+  //     Next.js перехватывает его и отвечает клиенту перенаправлением.
+  //     Браузер уходит на /login, эта форма пропадает со страницы,
+  //     так что обновлять state уже незачем — он просто не меняется.
+  //   Поэтому тип Promise<SignupState> в actions.ts не нарушается: у redirect()
+  //   тип возврата never, и TypeScript знает, что до конца функции выполнение не дойдёт.
+  //
+  // Есть и третий элемент — isPending (true, пока действие выполняется),
+  // его можно взять так: const [state, formAction, isPending] = useActionState(...)
+  const [state, formAction] = useActionState<SignupState | null, FormData>(signupAction, null);
 
   return (
     <Card {...props}>

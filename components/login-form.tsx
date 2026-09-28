@@ -1,3 +1,4 @@
+// 1:25:57
 "use client"
 
 import { cn } from "@/lib/utils"
@@ -24,6 +25,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  // useActionState: вызывает loginAction при сабмите формы; state — его последний результат (ошибка или null)
+  // Смотри более детальное описание в .../components/signup-form.tsx: там подобная работа происходит
   const [state, formAction] = useActionState<LoginState | null, FormData>(loginAction, null);
 
   return (
@@ -51,9 +54,9 @@ export function LoginForm({
               <Field>
                 <FieldLabel htmlFor="password">Пароль</FieldLabel>
                 <Input 
-                  id="password" 
-                  type="password" 
-                  name="password" 
+                  id="password"
+                  type="password"
+                  name="password"
                   required 
                 />
               </Field>
