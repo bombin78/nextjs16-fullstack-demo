@@ -3,7 +3,13 @@
     "deny": [
       "Read(//)",
       "Write(//)",
-      "Edit(//)"
+      "Edit(//)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(git push *)",
+      "Edit(.git/**)"
     ],
     "allow": [
       "Read(.)",
@@ -18,6 +24,7 @@
   },
   "sandbox": {
     "enabled": true,
+    "allowUnsandboxedCommands": false,
     "filesystem": {
       "allowRead": [
         "."
@@ -29,7 +36,8 @@
         "~/"
       ],
       "denyWrite": [
-        "~/"
+        "~/",
+        ".git"
       ]
     }
   }
