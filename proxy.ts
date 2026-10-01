@@ -1,3 +1,4 @@
+// 2:19:40
 // proxy.ts — специальный файл Next.js (до версии 16 назывался middleware.ts).
 // Next.js вызывает функцию proxy на сервере до рендера страницы.
 // Здесь она закрывает непубличные страницы: нет куки сессии Auth.js —
@@ -50,13 +51,13 @@ export function proxy(request: NextRequest) {
 
     const sessionCookie = 
         request.cookies.get('authjs.session-token') ??
-        request.cookies.get('__Secure-authjs.session-token')
+        request.cookies.get('__Secure-authjs.session-token');
 
     if(!sessionCookie?.value) {
-        return NextResponse.redirect(new URL("/login", request.url))
+        return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    return NextResponse.next()
+    return NextResponse.next();
 }
 
 // config — необязательная настройка proxy. Next.js ищет её по имени рядом

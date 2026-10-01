@@ -1,4 +1,5 @@
 // 1:25:57
+// Тип: Компонент shadcn/ui
 "use client"
 
 import { useMemo } from "react"

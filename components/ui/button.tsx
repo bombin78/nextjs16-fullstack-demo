@@ -1,4 +1,5 @@
 // 1:25:57
+// Тип: Компонент shadcn/ui
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"

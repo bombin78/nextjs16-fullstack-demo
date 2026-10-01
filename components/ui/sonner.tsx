@@ -1,3 +1,4 @@
+// Тип: Компонент shadcn/ui
 "use client"
 
 import { useTheme } from "next-themes"

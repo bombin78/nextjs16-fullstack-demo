@@ -1,4 +1,5 @@
 // 1:25:57
+// Тип: Компонент shadcn/ui
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

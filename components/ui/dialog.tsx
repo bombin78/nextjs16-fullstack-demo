@@ -1,3 +1,4 @@
+// Тип: Компонент shadcn/ui
 "use client"
 
 import * as React from "react"

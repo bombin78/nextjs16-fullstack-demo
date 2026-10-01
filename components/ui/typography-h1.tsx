@@ -1,3 +1,4 @@
+// Тип: Изменённый компонент shadcn/ui
 type PropsType = {children: React.ReactNode};
 
 export function TypographyH1({
