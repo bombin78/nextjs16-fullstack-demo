@@ -6,4 +6,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # Commit messages
 
-Write every commit message in English, on a single line, unless asked otherwise. Add a body only when explicitly asked for one.
+Write every commit message in English, on a single line, with no trailers, unless asked otherwise. Add a body only when explicitly asked for one.

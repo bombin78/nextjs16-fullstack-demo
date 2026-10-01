@@ -47,6 +47,8 @@ next-env.d.ts
 /CLAUDE.local.md
 /.claude/settings.local.json
 /.claude/answer-rules.md
+/.claude/agents
+/.claude/skills
 
 # backlog
 /backlog.md

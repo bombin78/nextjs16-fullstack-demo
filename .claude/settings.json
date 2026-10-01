@@ -22,6 +22,10 @@
       "WebFetch"
     ]
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "sandbox": {
     "enabled": true,
     "allowUnsandboxedCommands": false,
