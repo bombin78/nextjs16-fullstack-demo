@@ -1,3 +1,4 @@
+// 3:19:27
 'use client'
 
 import {
@@ -8,19 +9,22 @@ import {
     TableHead,
     TableHeader,
     TableRow
-} from '@/components/ui/table'
+} from '@/components/ui/table';
 import {
     Dialog,
     DialogTrigger
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
 
 import { Component, ComponentCategory } from "@/lib/types";
+// Иконки из библиотеки lucide-react. Каждая иконка — компонент React, который рисует SVG-картинку.
 import { Box, Cpu, Fan, HardDrive, MemoryStick, Monitor, Plus, Server, Zap } from "lucide-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Button } from '@/components/ui/button';
 import { AddComponentDialogContent } from './add-component-dialog';
 import { InfoTooltip } from '@/components/info-tooltip';
 
+// Маппинг иконок: перевод названия иконки из componentCategories в компонент иконки из lucide-react
+// Пример: iconMap['Cpu'] → компонент Cpu
 const iconMap: Record<ComponentCategory['icon'], React.ElementType> = {
     Cpu,
     Monitor,
@@ -30,7 +34,7 @@ const iconMap: Record<ComponentCategory['icon'], React.ElementType> = {
     Zap,
     Box,
     Fan
-}
+};
 
 type CategoryRow = {
     id: string;
@@ -44,17 +48,26 @@ type Props = {
     onSelectedComponent: (categoryId: string, component: Component | null) => void
 }
 
-export function TableParts({
+// REVIEW: [Tutorial]
+export const TableParts = memo(function TableParts({
+// export function TableParts({
     components,
     selectedByCategory,
     onSelectedComponent
 }: Props){
     const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
 
+    // Пример: selectedByCategory = {
+    //      cpu: { id: '...', name: 'Intel Core i5-13600K', price: 25990, type: 'cpu', socket: 'LGA1700' },
+    //      gpu: { id: '...', name: 'NVIDIA RTX 4070 Ti', price: 85990, type: 'gpu', socket: null }
+    // }
+    // Object.values берёт только значения свойств объекта, без ключей, и возвращает их массивом:
+    // [{ name: 'Intel Core i5-13600K', price: 25990, ... }, { name: 'NVIDIA RTX 4070 Ti', price: 85990, ... }]
+    // reduce складывает price всех элементов: 25990 + 85990 = 111980
     const totalPrice = Object.values(selectedByCategory).reduce(
-        (sum, c) => sum + (c?.price ?? 0),
+        (sum, item) => sum + (item?.price ?? 0),
         0
-    )
+    );
 
     return (
         <Table>
@@ -70,13 +83,23 @@ export function TableParts({
             <TableBody>
                 {
                     components.map(category => {
+                        // Пример: category.icon = 'Cpu' → Icon = компонент Cpu
                         const Icon = iconMap[category.icon];
+                        // Пример: category.id = 'cpu'
+                        // процессор выбран: selected = { 
+                        //      id: '...', 
+                        //      name: 'Intel Core i5-13600K', 
+                        //      price: 25990, 
+                        //      type: 'cpu', 
+                        //      socket: 'LGA1700' 
+                        // }
+                        // процессор не выбран: selected = undefined
                         const selected = selectedByCategory[category.id];
 
                         return (
                             <TableRow key={category.id} className='my-2'>
                                 <TableCell>
-                                    <div className="flex tems-center">
+                                    <div className="flex items-center">
                                         <Icon className="h-5 w-5 mr-1"/>
                                     </div>
                                 </TableCell>
@@ -89,26 +112,27 @@ export function TableParts({
                                 <TableCell>{selected?.name ?? '-'}</TableCell>
                                 <TableCell>{selected?.price ?? '-'}</TableCell>
                                 <TableCell className='text-right'>
+                                    {/* Модальное окно "Добавить компонент - ..." */}
                                     <Dialog
                                         open={openCategoryId === category.id}
                                         onOpenChange={(open) => setOpenCategoryId(open ? category.id : null)}
                                     >
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm">
-                                            <Plus className='h-4 w-4 mr-1'/>
-                                            { selected ? 'Изменить' : 'Добавить'}
-                                        </Button>
-                                    </DialogTrigger>
-                                    <AddComponentDialogContent
-                                        categoryId={category.id}
-                                        categoryName={category.name}
-                                        onSelect={
-                                            (c) => {
-                                                onSelectedComponent(category.id, c);
-                                                setOpenCategoryId(null)
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="sm">
+                                                <Plus className='h-4 w-4 mr-1'/>
+                                                { selected ? 'Изменить' : 'Добавить'}
+                                            </Button>
+                                        </DialogTrigger>
+                                        <AddComponentDialogContent
+                                            categoryId={category.id}
+                                            categoryName={category.name}
+                                            onSelect={
+                                                (item) => {
+                                                    onSelectedComponent(category.id, item);
+                                                    setOpenCategoryId(null)
+                                                }
                                             }
-                                        }
-                                    />
+                                        />
                                     </Dialog>
                                 </TableCell>
                             </TableRow>
@@ -121,6 +145,8 @@ export function TableParts({
                     <TableCell colSpan={5}>
                         <p className="font-medium">Цена сборки:</p>
                         <p className="font-large text-gray500">
+                            {/* Форматирует число по русским правилам: разряды через пробел, дробная часть через запятую.
+                                Пример: 111980 → '111 980', 1234.5 → '1 234,5' */}
                             {new Intl.NumberFormat('ru-Ru').format(totalPrice)}
                         </p>
                     </TableCell>
@@ -128,4 +154,5 @@ export function TableParts({
             </TableFooter>
         </Table>
     )
-}
+});
+// };

@@ -1,3 +1,4 @@
+// 3:08:48
 export type ComponentCategory = {
     id: string;
     name: string;
@@ -14,6 +15,7 @@ export type Component = {
 
 export type ComponentType = 'cpu' | 'gpu' | 'ram' | 'ssd' | 'motherboard' | 'psu' | 'case' | 'cooler'
 
+// Маппинг категорий: перевод id категории в тип компонента в базе
 export const categoryIdToDbType: Record<string, ComponentType> = {
     cpu: 'cpu',
     gpu: 'gpu',
@@ -25,6 +27,7 @@ export const categoryIdToDbType: Record<string, ComponentType> = {
     cooling: 'cooler'
 }
 
+// Маппинг категорий: перевод типа компонента в базе в id категории
 export const dbTypeToCategoryId: Record<ComponentType, string> = {
     cpu: 'cpu',
     gpu: 'gpu',

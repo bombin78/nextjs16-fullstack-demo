@@ -1,4 +1,5 @@
-import { ComponentCategory } from "./types";
+// 3:33:00
+import type { ComponentCategory } from "./types";
 
 export const componentCategories: ComponentCategory[] = [
     {id: 'cpu', name: 'CPU', icon: 'Cpu'},
