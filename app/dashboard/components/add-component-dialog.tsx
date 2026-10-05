@@ -1,3 +1,4 @@
+// 3:50:04
 'use client'
 
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -24,8 +25,8 @@ export function AddComponentDialogContent({
         getComponentsByCategory(categoryId)
             .then(
                 (data) => {
-                    setComponents(data)
-                    setLoading(false)
+                    setComponents(data);
+                    setLoading(false);
              })
     }, [categoryId])
 
@@ -39,12 +40,12 @@ export function AddComponentDialogContent({
                     components.length > 0 ? (
                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                             {
-                                components.map((c) => (
+                                components.map((component) => (
                                     <ComponentCard
-                                        key={c.id}
-                                        name={c.name}
-                                        price={c.price}
-                                        onClick={() => onSelect(c)}
+                                        key={component.id}
+                                        name={component.name}
+                                        price={component.price}
+                                        onClick={() => onSelect(component)}
                                     />
                                 ))
                             }

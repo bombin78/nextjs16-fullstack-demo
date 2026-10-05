@@ -65,7 +65,7 @@ export const TableParts = memo(function TableParts({
     // [{ name: 'Intel Core i5-13600K', price: 25990, ... }, { name: 'NVIDIA RTX 4070 Ti', price: 85990, ... }]
     // reduce складывает price всех элементов: 25990 + 85990 = 111980
     const totalPrice = Object.values(selectedByCategory).reduce(
-        (sum, item) => sum + (item?.price ?? 0),
+        (sum, component) => sum + (component?.price ?? 0),
         0
     );
 
@@ -82,6 +82,13 @@ export const TableParts = memo(function TableParts({
             </TableHeader>
             <TableBody>
                 {
+                    // components — это componentCategories из lib/constants.ts, его передаёт CurrentBuild:
+                    // components: [
+                    //      { id: 'cpu', name: 'CPU', icon: 'Cpu' },
+                    //      { id: 'gpu', name: 'Видеокарта', icon: 'Monitor' },
+                    //      { id: 'motherboard', name: 'Материнская плата', icon: 'Server' },
+                    //      ... всего 8 категорий
+                    // ]
                     components.map(category => {
                         // Пример: category.icon = 'Cpu' → Icon = компонент Cpu
                         const Icon = iconMap[category.icon];
@@ -127,8 +134,8 @@ export const TableParts = memo(function TableParts({
                                             categoryId={category.id}
                                             categoryName={category.name}
                                             onSelect={
-                                                (item) => {
-                                                    onSelectedComponent(category.id, item);
+                                                (component) => {
+                                                    onSelectedComponent(category.id, component);
                                                     setOpenCategoryId(null)
                                                 }
                                             }
@@ -142,6 +149,7 @@ export const TableParts = memo(function TableParts({
             </TableBody>
             <TableFooter>
                 <TableRow>
+                    {/* ячейку растягиваем на 5 столбцов (colSpan={5}), потому что выше их 5ть */}
                     <TableCell colSpan={5}>
                         <p className="font-medium">Цена сборки:</p>
                         <p className="font-large text-gray500">

@@ -75,6 +75,23 @@ model Like {
   @@unique([userId, buildId])
 }
 
+// enum ComponentType — enum языка схемы Prisma, а не TypeScript enum.
+// Это список значений, которые может принять поле type в model Component
+// выше. Каждая строка ниже — одно значение. Значение пишут одним словом:
+// cpu, без кавычек и без двоеточия.
+// TypeScript-код не может импортировать этот файл. Поэтому команда
+// prisma generate делает из enum файл lib/generated/prisma/enums.ts.
+// Там каждое значение становится парой:
+//   export const ComponentType = {
+//     cpu: 'cpu',
+//     gpu: 'gpu',
+//     ...
+//   } as const;
+// В паре cpu: 'cpu' обе части одинаковые. @map меняет только значение
+// в базе: из cpu @map("processor") в базе было бы 'processor', а в enums.ts
+// осталось бы cpu: 'cpu'.
+// Раз enums.ts сделан из этого файла, после изменения enum в этом файле
+// снова запускают prisma generate.
 enum ComponentType {
   cpu
   gpu

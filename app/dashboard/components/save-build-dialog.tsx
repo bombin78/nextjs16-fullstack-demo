@@ -1,3 +1,4 @@
+// 3:24:30
 'use client'
 
 import { Component } from "@/lib/types";
@@ -8,6 +9,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
+// sonner — библиотека всплывающих уведомлений (toast) для React.
+// Функция toast() добавляет уведомление, например toast.success('Сборка сохранена').
+// Показывает уведомления компонент <Toaster />: он должен быть выведен на странице.
 import { toast } from "sonner";
 
 type Props = {
@@ -27,39 +31,44 @@ export function SaveBuildDialog({
     defaultName,
     redirectPath
 }: Props) {
-    const router = useRouter()
-    const formRef = useRef<HTMLFormElement>(null)
+    const router = useRouter();
+    const formRef = useRef<HTMLFormElement>(null);
+    // useFormStatus — хук который, следит за родительской формой <form>.
+    // «Родительская форма» — это <form>, внутри которой стоит компонент, вызвавший хук
+    // pending — true, пока выполняется action формы: formAction из
+    // useActionState, который вызывает Server Action saveBuildAction.
+    // Нужен, чтобы на время сохранения заблокировать кнопку «Сохранить».
     const { pending } = useFormStatus();
-    const [state, formAction] = useActionState(saveBuildAction, initialState)
+    const [state, formAction] = useActionState(saveBuildAction, initialState);
 
     const componentIds = useMemo(() => Object
         .values(selectedByCategory)
         .filter((component): component is Component => component !== null)
         .map((component) => component.id)
-    ,[selectedByCategory])
+    ,[selectedByCategory]);
 
     useEffect(() => {
         if (state.status === 'success') {
-            toast.success('Сборка сохранена')
+            toast.success('Сборка сохранена');
             formRef.current?.reset();
 
             onOpenChange(false);
 
             if(redirectPath) {
-                router.push(redirectPath)
+                router.push(redirectPath);
             } else {
-                router.refresh()
+                router.refresh();
             }
         }
-    }, [onOpenChange, redirectPath, router, state.status])
+    }, [onOpenChange, redirectPath, router, state.status]);
 
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
             formRef.current?.reset();
         }
 
-        onOpenChange(nextOpen)
-    }
+        onOpenChange(nextOpen);
+    };
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
