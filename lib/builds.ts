@@ -37,6 +37,28 @@ export async function getPublicBuild(userId: string) {
     })
 }
 
+export async function getBuildToEdit(id: string) {
+    // findFirst возвращает первую запись, подходящую под where, или null.
+    // Здесь where ищет по id, а id в модели Build помечен @id и уникален,
+    // поэтому запись всегда одна и findFirst не обязателен.
+    // Варианты:
+    // - findUnique: where обязан содержать уникальное поле (здесь id),
+    //   тоже возвращает запись или null. Рядом с id можно добавить
+    //   неуникальные поля, например userId, чтобы найти только свою сборку.
+    // - findUniqueOrThrow: как findUnique, но вместо null выбрасывает
+    //   ошибку с кодом P2025.
+    return await prisma.build.findFirst({
+        where: { id },
+        include: {
+            components: {
+                include: {
+                    component: true
+                }
+            }
+        } 
+    })
+}
+
 export async function getPopularBuild(limit = 3) {
     return prisma.build.findMany({
         where: {
