@@ -71,7 +71,7 @@ export async function toggleLikeAction(formData: FormData) {
     });
 
     if (!build?.isPublic) {
-        return
+        return;
     }
 
     const existing = await prisma.like.findUnique({
