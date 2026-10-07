@@ -1,4 +1,3 @@
-// 4:01:25
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -32,5 +31,5 @@ export function ComponentCard({
                 </Button>
             </CardFooter>
         </Card> 
-    )
+    );
 }

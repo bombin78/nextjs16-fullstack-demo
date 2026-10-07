@@ -1,4 +1,3 @@
-// 6:36:22
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPopularBuild } from "@/lib/builds";
@@ -20,7 +19,7 @@ export async function PopularBuildCard() {
                     </p>
                 </CardContent>
             </Card>
-        )
+        );
     }
 
     return (
@@ -62,5 +61,5 @@ export async function PopularBuildCard() {
                 }
             </CardContent>
         </Card>
-    )
+    );
 }

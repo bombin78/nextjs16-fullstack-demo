@@ -1,4 +1,3 @@
-// 3:50:04
 'use client'
 
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -58,5 +57,5 @@ export function AddComponentDialogContent({
                 }
             </div>
         </DialogContent>
-    )
+    );
 }

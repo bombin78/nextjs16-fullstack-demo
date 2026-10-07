@@ -1,4 +1,3 @@
-// 5:06:40
 import { auth } from "@/auth";
 import { TypographyH3 } from "@/components/ui/typography-h3";
 import { getMyBuilds } from "@/lib/builds";
@@ -9,12 +8,11 @@ import { deleteBuildAction, setBuildPublicAction } from "./actions";
 import { Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Страница без 'use client' — серверный компонент, а серверный компонент может быть async-функцией.
 export default async function MyBuilds() {
     const session = await auth();
 
     if (!session?.user.id) {
-        redirect('/login')
+        redirect('/login');
     }
 
     const builds = await getMyBuilds(session.user.id);
@@ -52,5 +50,5 @@ export default async function MyBuilds() {
                 }
             </div>
         </div>
-    )
+    );
 }

@@ -1,4 +1,3 @@
-// 5:53:37
 import { auth } from "@/auth";
 import { TypographyH1 } from "@/components/ui/typography-h1";
 import { getPublicBuild } from "@/lib/builds";
@@ -58,5 +57,5 @@ export default async function ExplorePage() {
                 )
             }
         </div>
-    )
+    );
 }

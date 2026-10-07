@@ -14,5 +14,5 @@ export function InfoTooltip({ children }: { children: React.ReactNode }) {
         <TooltipContent>{children}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

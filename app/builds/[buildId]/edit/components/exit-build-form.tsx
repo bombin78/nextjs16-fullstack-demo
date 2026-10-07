@@ -1,4 +1,3 @@
-// 6:19:17
 'use client'
 
 import { SaveBuildDialog } from "@/app/dashboard/components/save-build-dialog";
@@ -91,5 +90,5 @@ export function EditBuildForm({
                 redirectPath="/builds"
             />
         </>
-    )
+    );
 }

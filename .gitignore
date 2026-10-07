@@ -40,15 +40,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma client, generated from prisma/schema.prisma by `prisma generate`
 /lib/generated/prisma
 
-# project walkthrough: the folder and the pointers to it
-/learn
+# personal Claude setup for explanations
 /CLAUDE.local.md
-/.claude/settings.local.json
-/.claude/answer-rules.md
 /.claude/agents
 /.claude/skills
+/.claude/answer-rules.md
 
 # backlog
 /backlog.md
+
+# notes
+/notes

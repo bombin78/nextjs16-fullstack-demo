@@ -1,10 +1,8 @@
-// 2:10:26
 import { CurrentBuild } from "./components/current-build";
 import { PopularBuildCard } from "./components/popular-build-card";
 
 export default function Dashboard() {
     return (
-        // S:3:04:15
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             <div className="min-w-0 flex-1">
                 <CurrentBuild />
@@ -13,6 +11,5 @@ export default function Dashboard() {
                 <PopularBuildCard />
             </aside>
         </div>
-        // E:6:41:47
-    )
+    );
 }

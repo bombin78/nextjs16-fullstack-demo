@@ -1,4 +1,3 @@
-// 1:44:38
 type Props = {
     message: string
 }
@@ -10,5 +9,5 @@ export function ErrorMessage({
         <p className="text-sm text-destructive" role='alert'>
             { message }
         </p>
-    )
+    );
 }

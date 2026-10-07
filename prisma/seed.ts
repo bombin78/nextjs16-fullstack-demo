@@ -1,22 +1,22 @@
-import 'dotenv/config'
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient, ComponentType } from '../lib/generated/prisma/client'
+import 'dotenv/config';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient, ComponentType } from '../lib/generated/prisma/client';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-const adapter = new PrismaPg(pool)
-const prisma = new PrismaClient({ adapter })
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('Начинаем заполнение базы данных...')
+  console.log('Начинаем заполнение базы данных...');
 
   // Очищаем существующие данные
-  console.log('Очищаем старые данные...')
-  await prisma.like.deleteMany()
-  await prisma.buildComponent.deleteMany()
-  await prisma.build.deleteMany()
-  await prisma.component.deleteMany()
-  await prisma.user.deleteMany()
+  console.log('Очищаем старые данные...');
+  await prisma.like.deleteMany();
+  await prisma.buildComponent.deleteMany();
+  await prisma.build.deleteMany();
+  await prisma.component.deleteMany();
+  await prisma.user.deleteMany();
 
   console.log('Добавляем компоненты...')
 
@@ -87,7 +87,7 @@ async function main() {
         socket: 'AM4'
       }
     ]
-  })
+  });
 
   // ========== ВИДЕОКАРТЫ (GPU) ==========
   await prisma.component.createMany({
@@ -147,7 +147,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // ========== МАТЕРИНСКИЕ ПЛАТЫ ==========
   await prisma.component.createMany({
@@ -195,7 +195,7 @@ async function main() {
         socket: 'AM4'
       }
     ]
-  })
+  });
 
   // ========== ОПЕРАТИВНАЯ ПАМЯТЬ (RAM) ==========
   await prisma.component.createMany({
@@ -237,7 +237,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // ========== НАКОПИТЕЛИ (SSD) ==========
   await prisma.component.createMany({
@@ -291,7 +291,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // ========== БЛОКИ ПИТАНИЯ (PSU) ==========
   await prisma.component.createMany({
@@ -339,7 +339,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // ========== КОРПУСА (CASE) ==========
   await prisma.component.createMany({
@@ -387,7 +387,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // ========== ОХЛАЖДЕНИЕ (COOLER) ==========
   await prisma.component.createMany({
@@ -447,7 +447,7 @@ async function main() {
         socket: null
       }
     ]
-  })
+  });
 
   // Создаем тестового пользователя
   console.log('Добавляем тестового пользователя...')
@@ -457,21 +457,22 @@ async function main() {
       name: 'Тестовый Пользователь',
       password: '123456'
     }
-  })
+  });
 
-  const componentsCount = await prisma.component.count()
-  const usersCount = await prisma.user.count()
+  const componentsCount = await prisma.component.count();
+  const usersCount = await prisma.user.count();
   
-  console.log(`Готово! Добавлено:`)
-  console.log(`   - ${componentsCount} компонентов`)
-  console.log(`   - ${usersCount} пользователей`)
+  console.log(`Готово! Добавлено:`);
+  console.log(`   - ${componentsCount} компонентов`);
+  console.log(`   - ${usersCount} пользователей`);
 }
 
 main()
   .catch((e) => {
-    console.error('Ошибка:', e)
-    process.exit(1)
+    console.error('Ошибка:', e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
+  
