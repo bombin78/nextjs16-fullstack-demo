@@ -1,3 +1,4 @@
+// 6:36:22
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPopularBuild } from "@/lib/builds";
@@ -5,16 +6,16 @@ import { Eye, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 
 export async function PopularBuildCard() {
-    const builds = await getPopularBuild(3)
+    const builds = await getPopularBuild(3);
 
     if (builds.length === 0) {
         return (
-            <Card className="w-full shirk-0 lg:w-64">
+            <Card className="w-full shrink-0 lg:w-64">
                 <CardHeader>
                     <CardTitle>Популярные сборки</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-sm text-muted-foregroud">
+                    <p className="text-sm text-muted-foreground">
                         Пока нету сборок
                     </p>
                 </CardContent>
@@ -23,13 +24,13 @@ export async function PopularBuildCard() {
     }
 
     return (
-        <Card className="w-full srink-0 lg:w-64">
+        <Card className="w-full shrink-0 lg:w-64">
             <CardHeader>
                 <CardTitle>Популярные сборки</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 {
-                    builds.map(build => (
+                    builds.map((build) => (
                         <div
                             key={build.id}
                             className="flex flex-col gap-1 rounded-lg border bg-muted/30 px-3 py-2"
@@ -39,7 +40,7 @@ export async function PopularBuildCard() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 shirnk-0"
+                                    className="h-8 w-8 shrink-0"
                                     asChild
                                 >
                                     <Link href={`/builds/${build.id}/edit`}>
@@ -48,7 +49,7 @@ export async function PopularBuildCard() {
                                 </Button>
                             </div>
                             <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <span className="tablular-nums">
+                                <span className="tabular-nums">
                                     { new Intl.NumberFormat('ru-Ru').format(build.totalPrice)}
                                 </span>
                                 <span className="flex items-center gap-1">

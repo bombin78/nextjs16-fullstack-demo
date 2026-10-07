@@ -15,7 +15,7 @@ export async function getMyBuilds(userId: string) {
                 }
             }
         }
-    })
+    });
 }
 
 export async function getPublicBuild(userId: string) {
@@ -34,7 +34,7 @@ export async function getPublicBuild(userId: string) {
             _count: { select: { likes: true }},
             likes: { where: { userId }, select: { id: true }}
         }
-    })
+    });
 }
 
 export async function getBuildToEdit(id: string) {
@@ -63,6 +63,11 @@ export async function getPopularBuild(limit = 3) {
     return prisma.build.findMany({
         where: {
             isPublic: true,
+            // Только сборки, у которых есть хотя бы один лайк.
+            // some берёт сборку, если хотя бы один её лайк подходит под
+            // условие в скобках. Условие {} пустое, ему подходит любой лайк.
+            // Похожие фильтры: none — ни один лайк не подходит,
+            // every — подходят все лайки.
             likes: { some: {}}
         },
         orderBy: { likes: { _count: "desc"}},
@@ -70,5 +75,5 @@ export async function getPopularBuild(limit = 3) {
         include: {
             _count: { select: { likes: true} }
         }
-    })
+    });
 }
