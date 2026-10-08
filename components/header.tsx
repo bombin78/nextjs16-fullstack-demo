@@ -10,7 +10,7 @@ export async function Header() {
         <header className="container mx-auto flex items-center p-4">
             <div className="shrink-0">
                 <TypographyH3>
-                    <Link href={session?.user ? '/dashboard' : '/'}>NextJS16 demo</Link>
+                    <Link href={session?.user ? '/dashboard' : '/'}>PC Build Configurator</Link>
                 </TypographyH3>
             </div>
             <nav className="min-w-0 flex-1">

@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Приложение на Nextjs16",
+  title: "PC Build Configurator",
   description: "Здесь ты можешь ...",
 };
 
