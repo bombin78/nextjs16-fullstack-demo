@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getBuildToEdit } from "@/lib/builds";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { EditBuildForm } from "./components/edit-build-form";
 
 type Props = PageProps<'/builds/[buildId]/edit'>
@@ -14,16 +14,18 @@ export default async function EditBuildPage({
 }: Props) {
     const session = await auth();
 
-    if (!session?.user.id) {
+    const userId = session?.user.id;
+
+    if (!userId) {
         redirect('/login');
     }
 
     const { buildId } = await params;
 
-    const build = await getBuildToEdit(buildId);
+    const build = await getBuildToEdit(buildId, userId);
 
     if (!build) {
-        return;
+        notFound();
     }
 
     const buildComponents = build.components.map((item) => ({
