@@ -1,4 +1,3 @@
-// 3:33:00
 import type { ComponentCategory } from "./types";
 
 export const componentCategories: ComponentCategory[] = [

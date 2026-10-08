@@ -1,4 +1,3 @@
-// 3:08:48
 export type ComponentCategory = {
     id: string;
     name: string;

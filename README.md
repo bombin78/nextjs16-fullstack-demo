@@ -1,8 +1,11 @@
-# nextjs16-fullstack-demo
+# pc-build-configurator
 
-Учебное fullstack-приложение на Next.js 16: конфигуратор сборки ПК.
-Пользователь регистрируется, входит в систему и в личном кабинете собирает
-компьютер из комплектующих.
+Конфигуратор сборки ПК на Next.js 16. Пользователь выбирает комплектующие
+по категориям и сохраняет сборку. В списке сборок видна общая цена.
+Сохранённую сборку можно отредактировать и опубликовать. Публичные сборки
+других пользователей собраны на отдельной странице, и им можно ставить лайки.
+
+Проект начат по учебному курсу, дальше развиваю его сам.
 
 
 ## Технологии
@@ -22,6 +25,9 @@
 | `/signup` | [app/signup/page.tsx](app/signup/page.tsx) | регистрация |
 | `/login` | [app/login/page.tsx](app/login/page.tsx) | вход |
 | `/dashboard` | [app/dashboard/page.tsx](app/dashboard/page.tsx) | конфигуратор, только после входа |
+| `/builds` | [app/builds/page.tsx](app/builds/page.tsx) | мои сборки, только после входа |
+| `/builds/explore` | [app/builds/explore/page.tsx](app/builds/explore/page.tsx) | публичные сборки, только после входа |
+| `/builds/[buildId]/edit` | [app/builds/[buildId]/edit/page.tsx](<app/builds/[buildId]/edit/page.tsx>) | редактирование сборки, только после входа |
 
 Без входа [proxy.ts](proxy.ts) перенаправляет с закрытых страниц на `/login`.
 
