@@ -1,12 +1,13 @@
 'use client'
 
-import { SaveBuildDialog } from "@/app/dashboard/components/save-build-dialog";
-import { TableParts } from "@/app/dashboard/components/table";
+
+import { useCallback, useMemo, useState } from "react";
+import { SaveBuildDialog } from "@/components/build-editor/save-build-dialog";
+import { TableParts } from "@/components/build-editor/table";
 import { Button } from "@/components/ui/button";
 import { TypographyH3 } from "@/components/ui/typography-h3";
 import { componentCategories } from "@/lib/constants";
 import { Component, dbTypeToCategoryId } from "@/lib/types";
-import { useCallback, useMemo, useState } from "react";
 
 type BuildComponentInput = {
     id: string;

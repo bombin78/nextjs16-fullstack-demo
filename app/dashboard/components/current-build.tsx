@@ -1,12 +1,12 @@
 'use client'
 
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TypographyH1 } from "@/components/ui/typography-h1";
 import type { Component } from "@/lib/types";
-import { useCallback, useState } from "react";
-import { TableParts } from "./table";
 import { componentCategories } from "@/lib/constants";
-import { SaveBuildDialog } from "./save-build-dialog";
+import { TableParts } from "@/components/build-editor/table";
+import { SaveBuildDialog } from "@/components/build-editor/save-build-dialog";
 
 export const CurrentBuild = () => {
     const [selectedByCategory, setSelectedByCategory] = useState<Record<string, Component | null>>({});

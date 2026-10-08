@@ -2,7 +2,6 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
-import { categoryIdToDbType, Component } from '@/lib/types' 
 import { revalidatePath } from 'next/cache';
 
 export type SaveBuildFromState = {
@@ -95,24 +94,3 @@ export async function saveBuild(
          return { success: false, error: 'Не удалось сохранить сборки'};
     }
 }
-
-export async function getComponentsByCategory(categoryId: string): Promise<Component[]> {
-    const dbType = categoryIdToDbType[categoryId];
-    
-    if (!dbType) {
-        return [];
-    }
-
-    const components = await prisma.component.findMany({
-        where: { type: dbType },
-        orderBy: { price: 'asc'}
-    });
-
-    return components.map((component) => ({
-        id: component.id,
-        type: component.type,
-        name: component.name,
-        price: component.price,
-        socket: component.socket
-    }));
-};

@@ -4,7 +4,7 @@ import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog
 import { Component } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { ComponentCard } from "./component-card";
-import { getComponentsByCategory } from "../actions";
+import { getComponentsByCategory } from "@/lib/actions/components";
 
 type Props = {
     categoryId: string;

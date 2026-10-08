@@ -1,7 +1,6 @@
 'use client'
 
 import { Component } from "@/lib/types";
-import { saveBuildAction, SaveBuildFromState } from "../actions";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { saveBuildAction, SaveBuildFromState } from "@/lib/actions/builds";
 
 type Props = {
     open: boolean;
