@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { getBuildToEdit } from "@/lib/builds";
 import { redirect } from "next/navigation";
-import { EditBuildForm } from "./components/exit-build-form";
+import { EditBuildForm } from "./components/edit-build-form";
 
 type Props = PageProps<'/builds/[buildId]/edit'>
 
