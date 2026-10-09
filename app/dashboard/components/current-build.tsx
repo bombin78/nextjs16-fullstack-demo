@@ -7,6 +7,7 @@ import type { Component } from "@/lib/types";
 import { componentCategories } from "@/lib/constants";
 import { TableParts } from "@/components/build-editor/table";
 import { SaveBuildDialog } from "@/components/build-editor/save-build-dialog";
+import { createBuildAction } from "@/lib/actions/builds";
 
 export const CurrentBuild = () => {
     const [selectedByCategory, setSelectedByCategory] = useState<Record<string, Component | null>>({});
@@ -36,6 +37,7 @@ export const CurrentBuild = () => {
                     open={saveDialogOpen}
                     onOpenChange={setSaveDialogOpen}
                     selectedByCategory={selectedByCategory}
+                    action={createBuildAction}
                 />
             </div>
         </>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TypographyH3 } from "@/components/ui/typography-h3";
 import { componentCategories } from "@/lib/constants";
 import { Component, dbTypeToCategoryId } from "@/lib/types";
+import { updateBuildAction } from "@/lib/actions/builds";
 
 type BuildComponentInput = {
     id: string;
@@ -18,6 +19,7 @@ type BuildComponentInput = {
 }
 
 type Props = {
+    buildId: string;
     buildName: string;
     buildComponents: BuildComponentInput[];
 }
@@ -45,6 +47,7 @@ function buildInitialSelected(
 }
 
 export function EditBuildForm({
+    buildId,
     buildName,
     buildComponents
 }: Props) {
@@ -89,6 +92,7 @@ export function EditBuildForm({
                 selectedByCategory={selectedByCategory}
                 defaultName={buildName}
                 redirectPath="/builds"
+                action={updateBuildAction.bind(null, buildId)}
             />
         </>
     );

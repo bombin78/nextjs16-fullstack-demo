@@ -4,23 +4,34 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
-export type SaveBuildFromState = {
+export type SaveBuildFormState = {
     status: 'idle' | 'success' | 'error',
     message?: string
 }
 
-export async function saveBuildAction(
-    _prevState: SaveBuildFromState,
-    formData: FormData
-): Promise<SaveBuildFromState> {
-    const name = String(formData.get('name') ?? '').trim();
-    const componentIds = String(formData.get('componentIds'))
+type BuildResult =
+    | { success: true; buildId: string }
+    | { success: false; error: string };
+
+type CheckedBuildInput =
+    | { success: true; userId: string; name: string; totalPrice: number }
+    | { success: false; error: string };
+
+// Id деталей из скрытого поля componentIds формы SaveBuildDialog.
+function readComponentIds(formData: FormData): string[] {
+    return String(formData.get('componentIds'))
         .split(',')
         .map((id) => id.trim())
         .filter(Boolean);
+}
 
-    const result = await saveBuild(name, componentIds);
+// Название сборки из поля name формы SaveBuildDialog.
+function readName(formData: FormData): string {
+    return String(formData.get('name') ?? '');
+}
 
+// Состояние формы для useActionState по результату createBuild или updateBuild.
+function toFormState(result: BuildResult): SaveBuildFormState {
     if (!result.success) {
         return {
             status: 'error',
@@ -34,10 +45,11 @@ export async function saveBuildAction(
     };
 }
 
-export async function saveBuild(
+// Проверки, общие для создания и обновления сборки, и подсчёт общей цены.
+async function checkBuildInput(
     name: string,
     componentIds: string[]
-): Promise<{success: true; buildId: string} | { success: false; error: string }> {
+): Promise<CheckedBuildInput> {
     const session = await auth();
 
     if (!session?.user.id) {
@@ -64,14 +76,55 @@ export async function saveBuild(
 
     const totalPrice = components.reduce((sum,component) => sum + component.price, 0);
 
+    return {
+        success: true,
+        userId: session.user.id,
+        name: trimmedName,
+        totalPrice
+    };
+}
+
+export async function createBuildAction(
+    _prevState: SaveBuildFormState,
+    formData: FormData
+): Promise<SaveBuildFormState> {
+    const name = readName(formData);
+    const componentIds = readComponentIds(formData);
+    const result = await createBuild(name, componentIds);
+
+    return toFormState(result);
+}
+
+export async function updateBuildAction(
+    buildId: string,
+    _prevState: SaveBuildFormState,
+    formData: FormData
+): Promise<SaveBuildFormState> {
+    const name = readName(formData);
+    const componentIds = readComponentIds(formData);
+    const result = await updateBuild(buildId, name, componentIds);
+
+    return toFormState(result);
+}
+
+export async function createBuild(
+    name: string,
+    componentIds: string[]
+): Promise<BuildResult> {
+    const input = await checkBuildInput(name, componentIds);
+
+    if (!input.success) {
+        return input;
+    }
+
     try {
         const build = await prisma.$transaction(
             async (tx) => {
                 const newBuild = await tx.build.create({
                     data: {
-                        name: trimmedName,
-                        totalPrice,
-                        userId: session.user.id
+                        name: input.name,
+                        totalPrice: input.totalPrice,
+                        userId: input.userId
                     }
                 });
 
@@ -90,7 +143,66 @@ export async function saveBuild(
         revalidatePath('/builds');
 
         return { success: true, buildId: build.id};
-    } catch (error) {
-         return { success: false, error: 'Не удалось сохранить сборки'};
+    } catch {
+        return { success: false, error: 'Не удалось сохранить сборку'};
+    }
+}
+
+// Обновляет сборку, только если её владелец — вошедший пользователь.
+async function updateBuild(
+    buildId: string,
+    name: string,
+    componentIds: string[]
+): Promise<BuildResult> {
+    const input = await checkBuildInput(name, componentIds);
+
+    if (!input.success) {
+        return input;
+    }
+
+    try {
+        const updated = await prisma.$transaction(
+            async (tx) => {
+                const { count } = await tx.build.updateMany({
+                    where: {
+                        id: buildId,
+                        userId: input.userId
+                    },
+                    data: {
+                        name: input.name,
+                        totalPrice: input.totalPrice
+                    }
+                });
+
+                if (count === 0) {
+                    return false;
+                }
+
+                await tx.buildComponent.deleteMany({
+                    where: { buildId }
+                });
+
+                await tx.buildComponent.createMany({
+                    data: componentIds.map((componentId) => ({
+                        buildId,
+                        componentId
+                    }))
+                });
+
+                return true;
+            }
+        );
+
+        if (!updated) {
+            return { success: false, error: 'Сборка не найдена'};
+        }
+
+        revalidatePath('/dashboard');
+        revalidatePath('/builds');
+        revalidatePath('/builds/explore');
+
+        return { success: true, buildId };
+    } catch {
+        return { success: false, error: 'Не удалось сохранить сборку'};
     }
 }

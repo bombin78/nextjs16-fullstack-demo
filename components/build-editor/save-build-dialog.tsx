@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { saveBuildAction, SaveBuildFromState } from "@/lib/actions/builds";
+import type { SaveBuildFormState } from "@/lib/actions/builds";
 
 type Props = {
     open: boolean;
@@ -16,21 +16,26 @@ type Props = {
     selectedByCategory: Record<string, Component | null>;
     defaultName?: string;
     redirectPath?: string;
+    action: (
+        prevState: SaveBuildFormState,
+        formData: FormData
+    ) => Promise<SaveBuildFormState>;
 }
 
-const initialState: SaveBuildFromState = { status: 'idle'}
+const initialState: SaveBuildFormState = { status: 'idle'}
 
 export function SaveBuildDialog({
     open,
     onOpenChange,
     selectedByCategory,
     defaultName,
-    redirectPath
+    redirectPath,
+    action
 }: Props) {
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
     const { pending } = useFormStatus();
-    const [state, formAction] = useActionState(saveBuildAction, initialState);
+    const [state, formAction] = useActionState(action, initialState);
 
     const componentIds = useMemo(() => Object
         .values(selectedByCategory)
