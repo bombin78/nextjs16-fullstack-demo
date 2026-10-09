@@ -4,6 +4,10 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
+function readBuildId(formData: FormData): string {
+    return String(formData.get('buildId') ?? '');
+}
+
 export async function setBuildPublicAction(formData: FormData) {
     const session = await auth();
 
@@ -11,7 +15,7 @@ export async function setBuildPublicAction(formData: FormData) {
         return;
     }
 
-    const buildId = String(formData.get('buildId')) ?? "";
+    const buildId = readBuildId(formData);
     const isPublic = formData.get('isPublic') === 'true';
 
     if (!buildId) {
@@ -37,7 +41,7 @@ export async function deleteBuildAction(formData: FormData) {
         return;
     }
 
-    const buildId = String(formData.get('buildId')) ?? "";
+    const buildId = readBuildId(formData);
 
     if (!buildId) {
         return;
@@ -57,8 +61,7 @@ export async function toggleLikeAction(formData: FormData) {
         return;
     }
 
-    
-    const buildId = String(formData.get('buildId')) ?? "";
+    const buildId = readBuildId(formData);
 
     if (!buildId) {
         return;
