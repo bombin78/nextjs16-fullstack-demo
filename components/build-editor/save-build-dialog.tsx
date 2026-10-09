@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useFormStatus } from "react-dom";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { SaveBuildFormState } from "@/lib/actions/builds";
+import { SaveBuildBtn } from "@/components/build-editor/save-build-btn";
 
 type Props = {
     open: boolean;
@@ -34,7 +33,6 @@ export function SaveBuildDialog({
 }: Props) {
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
-    const { pending } = useFormStatus();
     const [state, formAction] = useActionState(action, initialState);
 
     const componentIds = useMemo(() => Object
@@ -84,9 +82,7 @@ export function SaveBuildDialog({
                     <input type="hidden" name="componentIds" value={componentIds.join(',')}/>
 
                     <DialogFooter>
-                        <Button type="submit" disabled={pending || componentIds.length === 0 }>
-                            { pending ? 'Сохранение..' : 'Сохранить'}
-                        </Button>
+                        <SaveBuildBtn disabled={componentIds.length === 0 } />
                     </DialogFooter>
                 </form>
             </DialogContent>
